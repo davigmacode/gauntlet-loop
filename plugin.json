@@ -1,13 +1,13 @@
 {
   "name": "gauntlet-loop",
   "displayName": "Gauntlet Loop",
-  "version": "1.0.0",
-  "description": "Turns any goal into a short, paste-ready gauntlet loop prompt that makes an agent set a concrete quality bar, run builder vs harsh critic, compare blind, and loop until it wins.",
+  "version": "1.1.0",
+  "description": "Multi-agent quality enforcement for Antigravity: sets concrete reference bars, runs builder vs harsh critic in isolated contexts, and iterates autonomously across 4 specialized workflows until victory.",
   "logo": "assets/logo.png",
   "suggestedPrompts": [
-    "/gauntlet-loop Build a Stripe-like checkout UI",
-    "gauntlet this: Write an in-depth technical report on SQLite vs DuckDB",
-    "make a gauntlet prompt to build a CLI tool that beats ripgrep in usability"
+    "/gauntlet-loop Build a Stripe-grade checkout UI using Classic A/B mode",
+    "gauntlet this: Build a high-throughput JSON parser and beat fastjson via Benchmark mode",
+    "Run Tournament Arena gauntlet loop with 3 builders to discover the best Three.js shader architecture"
   ],
   "skills": [
     "./skills/gauntlet-loop"

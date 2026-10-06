@@ -1,85 +1,83 @@
 ---
 name: gauntlet-loop
-description: Turns any goal into a high-standard iterative gauntlet loop prompt or directly orchestrates multi-agent iterations. Sets a concrete quality bar, splits work into verifiable pieces, runs builder and harsh critic/judge subagents with fresh context, compares blind or benchmarks against the bar, and loops until victory. Supports 4 specialized workflows: Classic A/B, Tournament Arena, Adversarial Red-Team, and Benchmark Driven. Triggers on "/gauntlet-loop", "gauntlet loop", "gauntlet this", "make a gauntlet prompt", "loop until it beats X".
+description: Turns any goal into a high-standard iterative gauntlet loop prompt or directly orchestrates multi-agent iterations in Google Antigravity. Sets a concrete quality bar, splits work into verifiable pieces, runs builder and harsh critic/judge subagents with fresh context, compares blind or benchmarks against the bar, and loops until victory. Supports 4 specialized workflows: Classic A/B, Tournament Arena, Adversarial Red-Team, and Benchmark Driven. Triggers on "/gauntlet-loop", "gauntlet loop", "gauntlet this", "make a gauntlet prompt", "loop until it beats X".
 ---
 
-# Gauntlet Loop for Antigravity
+# Gauntlet Loop for Google Antigravity
 
-Menghasilkan prompt siap pakai atau mengorkestrasi eksekusi multi-agent secara otonom hingga hasil pekerjaan mengalahkan standar referensi nyata (*The Bar*).
+Generates copy-paste ready gauntlet loop prompts or directly orchestrates autonomous multi-agent execution until your work beats a real-world reference standard (**The Bar**).
 
 ---
 
-## 4 Variasi Workflow Gauntlet Loop
+## 4 Specialized Workflows
 
-Pilih workflow yang paling sesuai dengan jenis tugas:
+Select the workflow tailored to your task:
 
 ### 1. Classic Gauntlet (1-on-1 Blind A/B)
-* **Cocok untuk**: UI/UX design, landing page, copywriting, technical writing, diagram visual.
-* **Arsitektur Subagents**:
-  * `Builder` (Model: `flash` atau `inherit`, write tools aktif).
-  * `Harsh Critic` (Model: `pro`, context bersih, tanpa bias terhadap usaha builder).
-* **Mekanisme**: Critic membandingkan output vs referensi asli secara blind (label nama disamarkan), memilih yang terbaik, dan menyebutkan 1 kelemahan paling krusial untuk diperbaiki builder.
+* **Best for**: UI/UX design, landing pages, persuasive copywriting, technical articles, and visual diagrams.
+* **Subagent Architecture**:
+  * `Builder` (Model: `inherit` / `flash`, file edit tools enabled).
+  * `Harsh Critic` (Model: `pro`, completely fresh context, unswayed by builder effort).
+* **Mechanism**: The critic inspects the output side-by-side with the real reference with identifying labels stripped (blind A/B test). It picks the winner and names the single biggest remaining gap. The feedback feeds directly back to the builder.
 
 ### 2. Tournament Arena (Multi-Builder vs 1 Judge)
-* **Cocok untuk**: Eksplorasi konsep kreatif, variasi desain frontend, pemilihan arsitektur/algoritma.
-* **Arsitektur Subagents**:
-  * 2–3 `Builder` independen dengan strategi berbeda (gunakan `Workspace: 'branch'` agar tidak bentrok direktori).
+* **Best for**: Creative explorations, diverse algorithmic implementations, and frontend component architectures.
+* **Subagent Architecture**:
+  * 2–3 independent `Builder` agents, each given distinct philosophies or constraints (use `Workspace: 'branch'` to prevent file collisions).
   * 1 `Judge / Referee` (Model: `pro`).
-* **Mekanisme**: Seluruh variasi diadu satu sama lain dan dibandingkan dengan The Bar. Pemenang dipilih untuk iterasi babak berikutnya.
+* **Mechanism**: All candidate implementations compete against each other and against The Bar. The judge eliminates weaker variants and advances the top contender into subsequent refinement rounds.
 
 ### 3. Adversarial Red-Team (Builder vs Breaker)
-* **Cocok untuk**: Backend security, autentikasi, parser data, smart contract, business logic kritis.
-* **Arsitektur Subagents**:
-  * `Builder`: Mengimplementasikan fitur dan unit test standar.
-  * `Breaker / Red Team`: Mengirim input malformed, race conditions, edge-cases, dan payload untuk merusak kode.
-* **Mekanisme**: Loop berhenti hanya jika Breaker kehabisan skenario eksploitasi/kerusakan (zero unhandled exceptions & pass 100% boundary tests).
+* **Best for**: Backend APIs, authentication systems, data parsers, smart contracts, and mission-critical business logic.
+* **Subagent Architecture**:
+  * `Builder`: Implements functional features and standard test suites.
+  * `Breaker / Red Team`: Actively attacks the implementation using malformed payloads, edge cases, race conditions, and boundary fuzzing.
+* **Mechanism**: The loop exits only when the breaker runs out of reproducible bugs or exploit scenarios (zero unhandled exceptions & 100% boundary test passing).
 
 ### 4. Benchmark Driven (Measurable Performance)
-* **Cocok untuk**: Optimasi latensi/kecepatan, bundle size web, efisiensi memori, query database.
-* **Arsitektur Subagents**:
-  * `Optimizer`: Melakukan refactoring dan tuning kode.
-  * `Benchmark Runner`: Menjalankan profiling di sandbox Antigravity dan mengukur metrik objektif (ms, KB, FPS, pass rate).
-* **Mekanisme**: Loop otomatis selesai hanya ketika metrik target berhasil melampaui metrik kompetitor/referensi.
+* **Best for**: Latency/throughput optimization, frontend bundle reduction, memory footprint minimization, and SQL/query tuning.
+* **Subagent Architecture**:
+  * `Optimizer`: Iteratively profiles and refactors codebase.
+  * `Benchmark Runner`: Executes reproducible benchmarks in the Antigravity sandbox and captures objective metrics (ms, KB, FPS, ops/sec).
+* **Mechanism**: Fully deterministic exit criteria. The loop stops only when recorded telemetry objectively outperforms the competitor or threshold.
 
 ---
 
-## Alur Kerja Agen (Execution Flow)
+## Execution Flow
 
-1. **Identifikasi Goal & Pilih Workflow**: Tentukan goal utama dan workflow mana yang paling relevan dari 4 mode di atas.
-2. **Tetapkan The Bar (Standar Acuan)**:
-   * **Named**: Nama spesifik produk/repo/artikel (misal: "Stripe Checkout", "Ripgrep CLI benchmark").
-   * **Fetchable**: Dapat diambil/diinspeksi langsung (URL, file lokal, repo, screenshot).
-   * **Comparable**: Dapat diuji secara A/B atau diukur dengan angka pasti.
-   *(Jika user belum menyertakan referensi, tawarkan 2–3 pilihan standar acuan terlebih dahulu)*.
-3. **Pilihan Eksekusi**:
-   * **Opsi A (Hasilkan Prompt)**: Berikan satu blok prompt siap tempel yang ringkas (120–180 kata).
-   * **Opsi B (Eksekusi Langsung via Subagents)**: Agen langsung menjalankan `define_subagent` dan `invoke_subagent` untuk mengorkestrasi perulangan secara otomatis.
-4. **Pelaporan Kemajuan**: Catat progress perbandingan dan skor tiap putaran ke dalam berkas **Artifact Antigravity** agar user dapat memantau evolusi hasil secara langsung.
+1. **Clarify Goal & Select Workflow**: Determine the target objective and choose the best fit among the 4 workflows.
+2. **Establish The Bar (The Ground Truth)**:
+   * **Named**: A specific entity, not an abstract category (e.g., "Stripe Checkout", "Ripgrep CLI benchmark", "Julia Evans technical post").
+   * **Fetchable**: The critic must be able to inspect the real artifact directly (live URL, local repo, screenshot, benchmark dataset).
+   * **Comparable**: Both must be capable of sitting side-by-side for blind evaluation or quantitative comparison.
+   *(If the user has not supplied a reference, propose 2–3 concrete candidates before proceeding)*.
+3. **Execution Choice**:
+   * **Option A (Generate Prompt)**: Return a concise, paste-ready prompt (120–180 words).
+   * **Option B (Direct Orchestration)**: The lead agent immediately configures and launches `define_subagent` and `invoke_subagent` to orchestrate the loop.
+4. **Transparent Progress Tracking**: Log intermediate scores, gaps, and iteration diffs into an Antigravity **Artifact** so the user can observe progress live in the canvas panel.
 
 ---
 
-## Template Prompt Siap Pakai (Antigravity Native)
-
-Gunakan template ini saat menghasilkan prompt untuk user:
+## Ready-to-Use Prompt Template (Antigravity Native)
 
 ```text
 Build [GOAL].
 
-The bar is [BAR]. Dapatkan referensi aslinya terlebih dahulu dan bandingkan secara langsung, bukan hanya membaca deskripsinya.
-Workflow: [Pilih: Classic A/B / Tournament Arena / Adversarial Red-Team / Benchmark Driven].
+The bar is [BAR]. Fetch and inspect the real reference directly, never rely solely on a summary.
+Workflow: [Classic A/B / Tournament Arena / Adversarial Red-Team / Benchmark Driven].
 
-Pecah tugas ini menjadi komponen-komponen terkecil yang bisa dinilai secara mandiri.
-Untuk setiap komponen, jalankan subagent Builder (model: inherit/flash) dan Harsh Critic (model: pro) dengan context bersih melalui invoke_subagent.
-Critic harus menilai secara objektif/blind tanpa memuji, menaruh hasil kita berdampingan dengan referensi asli, dan menyebutkan 1 gap terbesar yang tersisa.
+Decompose this task into the smallest individually verifiable components.
+For each component, fan out a Builder (model: inherit/flash) and a separate Harsh Critic (model: pro) with fresh context using invoke_subagent.
+The critic must evaluate blind with labels stripped, deliver blunt feedback without empty praise, and isolate the single biggest remaining gap.
 
-Gunakan mode /goal dan terus lakukan iterasi sampai Critic memilih hasil buatan kita secara blind.
-Catat riwayat dan perkembangan iterasi ke dalam Artifacts Antigravity agar prosesnya terpantau.
+Run under /goal mode and iterate relentlessly until the critic blindly selects ours over the reference.
+Persist iteration logs, telemetry, and side-by-side notes into Antigravity Artifacts.
 ```
 
 ---
 
-## Aturan Penting
+## Core Rules
 
-* **Jangan biarkan Builder menilai karyanya sendiri**: Penilai harus selalu memiliki konteks terpisah (sub-agent mandiri).
-* **Hindari batasan iterasi statis (N rounds)**: Kriteria keluar dari loop adalah menang melawan *The Bar*, bukan jumlah putaran tertentu.
-* **Kritik harus tajam (*Harsh Critic*)**: Nilai biner atau A/B langsung lebih efektif daripada skor angka yang cenderung bias melunak di tiap putaran.
+* **Never allow a builder to judge its own output**: The critic must be an isolated subagent with clean context.
+* **No artificial iteration caps**: Loops conclude when the reference standard is beaten, not at an arbitrary `N` rounds.
+* **Binary evaluation over vague scoring**: A/B comparisons and binary win/loss criteria prevent score inflation over multiple rounds.
